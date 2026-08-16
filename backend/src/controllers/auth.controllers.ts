@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { registerUser } from "../services/auth.service";
 import { loginUser } from "../services/auth.service";
 import { generateToken } from "../utils/jwt";
+import User from "../models/User"
 
 export const register = async (req: Request, res: Response) => {
 
@@ -65,5 +66,39 @@ export const login = async (req: Request, res: Response) => {
       success: false,
       message: error.message
     });
+  }
+};
+
+export const getUserProfile = async (req: Request, res: Response) => {
+
+  try {
+
+    const user = await User.findById(req.user?.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        fisrtName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error: any) {
+
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener el usuario"
+    });
+
   }
 };
