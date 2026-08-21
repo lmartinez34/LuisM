@@ -23,3 +23,9 @@ export const login = async (data: LoginData) => {
 
   return response.data;
 };
+
+export const getUserProfile = async () => {
+  const response = await api.get("/auth/profile");
+
+  return response.data;
+};
